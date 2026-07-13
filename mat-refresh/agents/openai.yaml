@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mat Refresh"
+  short_description: "Refresh a private project workflow"
+  default_prompt: "Select the mat-refresh skill to update this repository's private workflow safely."
+policy:
+  allow_implicit_invocation: false

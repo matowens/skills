@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mat Init"
+  short_description: "Initialize a private project workflow"
+  default_prompt: "Select the mat-init skill to initialize Mat's private workflow in this repository."
+policy:
+  allow_implicit_invocation: false

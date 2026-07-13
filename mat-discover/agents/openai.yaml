@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mat Discover"
+  short_description: "Explore a proposed task thoroughly"
+  default_prompt: "Select the mat-discover skill to explore this proposed task before specification."
+policy:
+  allow_implicit_invocation: false
