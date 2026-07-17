@@ -1,6 +1,0 @@
-interface:
-  display_name: "Mat Task"
-  short_description: "Create one implementation-ready task"
-  default_prompt: "Select the mat-task skill to turn this discovery into one task specification."
-policy:
-  allow_implicit_invocation: false

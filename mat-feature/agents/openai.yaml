@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mat Feature"
+  short_description: "Create a complete feature implementation plan"
+  default_prompt: "Use $mat-feature to turn our completed discovery into a confirmed Feature Specification and ordered implementation-ready Task set."
+policy:
+  allow_implicit_invocation: false
