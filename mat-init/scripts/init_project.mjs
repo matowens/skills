@@ -10,7 +10,8 @@ const TEMPLATE_FILES = new Map([
   ["CONTEXT.md", "CONTEXT.md"],
   ["WORKFLOW.md", "WORKFLOW.md"],
   ["TASKS.md", "TASKS.md"],
-  ["tasks/_template.md", "task-template.md"],
+  ["templates/feature.md", "feature-template.md"],
+  ["templates/task.md", "task-template.md"],
 ]);
 
 class InitError extends Error {}
@@ -114,6 +115,8 @@ function initialize(repoPath, resumeIncomplete) {
     copyFileSync(join(templates, sourceName), destination);
     created.push(destination);
   }
+
+  mkdirSync(join(target, "features"), { recursive: true });
 
   addLocalExclusion(repo);
   const probe = join(target, "AGENTS.md");

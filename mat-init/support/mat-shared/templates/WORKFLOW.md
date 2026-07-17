@@ -15,14 +15,15 @@
 
 ## State Ownership
 
+- `mat-discover` creates or updates one Feature Specification, assigns new Feature identifiers, and registers the Feature in the Task index.
 - `mat-task` creates the feature's ordered Task set and updates the Task index.
 - `mat-build` moves exactly one Task through `Ready`, `In Progress`, and `Review`.
 - `mat-review` remains read-only and never changes workflow state.
 - `mat-next` moves an explicitly approved Task from `Review` to `Complete`, reconciles durable state, and identifies what follows without starting it.
 
-## Task Organization
+## Feature and Task Organization
 
-Treat `TASKS.md` as the central Task index. Group Tasks under their feature in implementation order and show each Task's current lifecycle state inline. Store specifications under `tasks/<FFFF-feature-name>/`, using a four-digit globally sequential feature number followed by a lowercase kebab-case name. Keep Task numbers globally sequential across the project independently of feature numbers. Never reuse or renumber either identifier. Use the Active Task section as a pointer to the single current Task; keep it populated through `In Progress` and `Review` until `mat-next` completes the Task.
+Treat `TASKS.md` as the central Task index. Store each shareable Feature Specification at `features/<FFFF-feature-name>/FEATURE.md` and its Task Specifications under `features/<FFFF-feature-name>/tasks/`. Use four-digit globally sequential Feature numbers and globally sequential Task numbers; never reuse or renumber either identifier. Link each Feature Specification from the index, show Feature readiness, list Tasks beneath it in implementation order, and show every Task's lifecycle state inline. Use the Active Task section as a pointer to the single current Task; keep it populated through `In Progress` and `Review` until `mat-next` completes the Task.
 
 ## Working Rules
 

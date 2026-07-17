@@ -1,6 +1,6 @@
 # Workflow Rules
 
-Use these terms consistently: Project Context, Workflow, Task, Task Specification, Acceptance Criteria, Lead Engineer, Software Engineer, QA Engineer, and Review. Do not use "checkpoint" as the primary workflow term.
+Use these terms consistently: Project Context, Workflow, Feature, Feature Specification, Task, Task Specification, Acceptance Criteria, Lead Engineer, Software Engineer, QA Engineer, and Review. Do not use "checkpoint" as the primary workflow term.
 
 ## Roles
 
@@ -28,5 +28,6 @@ Use these terms consistently: Project Context, Workflow, Task, Task Specificatio
 13. Never claim completion without evidence.
 14. Internal QA and Lead Engineer approval never replace Mat's personal code review.
 15. Treat `.mat/TASKS.md` as the central Task index. Group Tasks by feature, preserve their listed implementation order, and keep every indexed state synchronized with its Task Specification.
+16. Treat the confirmed Feature Specification as the durable source for feature scope and Task decomposition; do not rely on chat history alone.
 
-Direct Lead Engineer edits are acceptable only for private `.mat/` workflow state and documentation during `mat-init`, `mat-refresh`, `mat-task`, `mat-next`, or task status/work-log updates. Production code and tests must be modified only by the Software Engineer during `mat-build`.
+Direct Lead Engineer edits are acceptable only for private `.mat/` workflow state and documentation during `mat-init`, `mat-refresh`, `mat-discover`, `mat-task`, `mat-next`, or task status/work-log updates. Production code and tests must be modified only by the Software Engineer during `mat-build`.
