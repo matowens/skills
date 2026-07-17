@@ -20,7 +20,27 @@ Every `agents/openai.yaml` sets `policy.allow_implicit_invocation: false`. Expli
 
 ## Availability
 
-After reviewing this repository, make exactly the seven skill directories available to Codex through the chosen skill location. Shared references and templates are bundled as the non-discoverable `mat-init/support/mat-shared` directory, so do not expose a separate top-level `mat-shared` skill.
+Codex discovers these personal workflow skills from `$CODEX_HOME/skills`, which defaults to `~/.codex/skills`. This Codex-specific location reflects the workflow's runtime boundary: Codex is always the Lead Engineer and sole workflow entry point, while Claude participates only through the explicitly invoked QA bridge.
+
+This repository remains the canonical source. The installer creates one live directory link for each of the seven skill directories instead of copying them, so repository edits and pulls are available to Codex immediately without reinstalling.
+
+From Command Prompt in the repository root, run the one-time installation:
+
+```batch
+install.cmd
+```
+
+Verify the current links without changing anything:
+
+```batch
+install.cmd --check
+```
+
+The command is idempotent. It preserves correct links and refuses to replace any conflicting file, directory, or link. On Windows it creates NTFS directory junctions, which provide live directory-link behavior without requiring an Administrator console or Developer Mode. On other platforms it creates symbolic links.
+
+Codex detects skill changes automatically. Restart Codex if the skills do not appear, then explicitly select or invoke them with `$mat-init`, `$mat-discover`, and the other canonical names.
+
+Shared references and templates are bundled as the non-discoverable `mat-init/support/mat-shared` directory, so the installer does not expose a separate top-level `mat-shared` skill.
 
 This repository does not install or update Mat's active Codex environment automatically.
 
@@ -62,5 +82,5 @@ The repository-root `AGENTS.md` remains authoritative and unchanged. `.mat/` is 
 Run all repository tests:
 
 ```text
-node --test tests/skills.test.mjs
+node --test tests/*.test.mjs
 ```
