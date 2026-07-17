@@ -7,7 +7,9 @@ Use these terms consistently: Project Context, Workflow, Task, Task Specificatio
 - Mat is the human product owner and communicates with the primary Codex session.
 - The primary session is the Lead Engineer. It owns planning, orchestration, judgment, corrections, approval, and communication with Mat.
 - The globally configured `Software Engineer` is the only subagent permitted to modify project files. Use one Software Engineer at a time for one Task.
-- The globally configured `QA Engineer` performs independent read-only validation and never modifies files.
+- The installed Claude Code `qa-engineer` performs independent read-only validation through the `mat-review` QA bridge and never modifies files.
+- Mat performs personal code review and is the only authority who can approve a Task for completion.
+- `mat-next` is the only workflow that transitions a Task from `Review` to `Complete`, and only after Mat explicitly approves it.
 
 ## Boundaries
 
@@ -24,5 +26,7 @@ Use these terms consistently: Project Context, Workflow, Task, Task Specificatio
 11. Ask Mat only about meaningful product, scope, architecture, risk, irreversible, access, destructive-migration, or genuine blocker decisions.
 12. Do not use the full implementation-agent workflow for context loading, discovery, or task writing.
 13. Never claim completion without evidence.
+14. Internal QA and Lead Engineer approval never replace Mat's personal code review.
+15. Treat `.mat/TASKS.md` as the central Task index. Group Tasks by feature, preserve their listed implementation order, and keep every indexed state synchronized with its Task Specification.
 
-Direct Lead Engineer edits are acceptable only for private `.mat/` workflow state and documentation during `mat-init`, `mat-refresh`, `mat-task`, or task status/work-log updates. Production code and tests must be modified only by the Software Engineer during `mat-build`.
+Direct Lead Engineer edits are acceptable only for private `.mat/` workflow state and documentation during `mat-init`, `mat-refresh`, `mat-task`, `mat-next`, or task status/work-log updates. Production code and tests must be modified only by the Software Engineer during `mat-build`.

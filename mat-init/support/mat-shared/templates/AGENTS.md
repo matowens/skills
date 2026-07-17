@@ -1,14 +1,14 @@
 # Mat's Private Project Workflow
 
-workflow_version: 1
-
 Read the repository-root `AGENTS.md` first when present; it remains authoritative repository guidance. Then use this file as the router for Mat's private workflow.
 
 - Read `CONTEXT.md` for Project Context before discovery, specification, implementation, or review.
 - Read `WORKFLOW.md` before changing workflow state or orchestrating implementation.
-- Read `TASKS.md` to identify current Task state.
+- Read `TASKS.md` to identify the active Task, feature membership, implementation order, and current state.
 - Read the applicable file under `tasks/` for specification, implementation, or review.
 
-Mat is the human product owner. The primary Codex session is the Lead Engineer. The globally configured `Software Engineer` is the only subagent permitted to modify production project files. The globally configured `QA Engineer` validates independently and read-only.
+Mat is the human product owner. The primary Codex session is the Lead Engineer. The globally configured Codex `Software Engineer` is the only subagent permitted to modify production project files. The installed Claude Code `qa-engineer` validates independently and read-only through the `mat-review` process, whether invoked directly or by `mat-build`.
 
-Current Task state is indexed in `TASKS.md`.
+`mat-build` stops with the current Task in `Review`. Only `mat-next` may mark it `Complete`, and only after Mat explicitly approves it following personal code review.
+
+Feature membership, Task order, and current Task state are indexed in `TASKS.md`.

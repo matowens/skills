@@ -62,4 +62,4 @@ Only unresolved questions that do not prevent the Task from becoming Ready.
 
 ## Work Log
 
-Implementation and Review activity recorded by the Lead Engineer.
+Implementation, QA, Lead Engineer review, Mat approval, and state transitions recorded concisely by the Lead Engineer.

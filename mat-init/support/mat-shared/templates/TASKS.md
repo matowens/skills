@@ -4,14 +4,6 @@
 
 - None.
 
-## Ready Tasks
-
-- None.
-
-## Future Tasks
-
-- None.
-
-## Completed Tasks
+## Features
 
 - None.
