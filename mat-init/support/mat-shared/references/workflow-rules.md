@@ -9,7 +9,7 @@ Use these terms consistently: Project Context, Workflow, Feature, Feature Specif
 - The globally configured `Software Engineer` is the only subagent permitted to modify project files. Use one Software Engineer at a time for one Task.
 - The installed Claude Code `qa-engineer` performs independent read-only validation through the `mat-review` QA bridge and never modifies files.
 - Mat performs personal code review and is the only authority who can approve a Task for completion.
-- `mat-next` is the only workflow that transitions a Task from `Review` to `Complete`, and only after Mat explicitly approves it.
+- `mat-next` is the only workflow that transitions a Task from `Review` to `Complete`. Mat's explicit invocation after personal review confirms approval when it contains no feedback or uncertainty.
 
 ## Boundaries
 

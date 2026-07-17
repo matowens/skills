@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mat Next"
+  short_description: "Complete an approved task and advance"
+  default_prompt: "Use $mat-next to confirm my approval of the current reviewed Task, complete it, and identify what follows."
+policy:
+  allow_implicit_invocation: false

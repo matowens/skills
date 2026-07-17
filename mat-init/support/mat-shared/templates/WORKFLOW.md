@@ -11,7 +11,7 @@
 
 `Draft` → `Ready` → `In Progress` → `Review` → `Complete`
 
-`Review` includes Claude QA, Lead Engineer review, and Mat's personal code review. Required internal findings or Mat feedback may return the same Task from `Review` to `In Progress` for a correction pass, followed by another complete review. `mat-build` stops in `Review`; only `mat-next` may transition the Task to `Complete` after Mat explicitly approves it. Use `Blocked` only when a genuine blocker prevents safe progress. Work on one Task at a time.
+`Review` includes Claude QA, Lead Engineer review, and Mat's personal code review. Required internal findings or Mat feedback may return the same Task from `Review` to `In Progress` for a correction pass, followed by another complete review. `mat-build` stops in `Review`; only an explicit `mat-next` invocation may transition the unchanged reviewed Task to `Complete`. That invocation confirms Mat's personal review and approval when it contains no feedback or uncertainty. Use `Blocked` only when a genuine blocker prevents safe progress. Work on one Task at a time.
 
 ## State Ownership
 

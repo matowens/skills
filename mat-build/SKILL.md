@@ -64,7 +64,9 @@ When Mat supplies personal code-review feedback through a correction-pass invoca
 
 ## Hand off for Mat review
 
-After `mat-review` returns `APPROVED`, keep the Task in `Review` and keep it as the Active Task. Synchronize its indexed state and record the Claude QA and Lead Engineer outcomes in the Work Log. Ask Mat to perform personal code review and report:
+After `mat-review` returns `APPROVED`, keep the Task in `Review` and keep it as the Active Task. Synchronize its indexed state and record the Claude QA and Lead Engineer outcomes in the Work Log. Also record a concise reviewed file-state manifest for every relevant production, test, and project-documentation path using its current Git status entry plus current `git hash-object` blob hash or a deleted marker. Include relevant untracked paths and exclude private `.mat/` state. This evidence allows `mat-next` to detect implementation changes made after internal approval.
+
+Ask Mat to perform personal code review and report:
 
 - the implementation outcome and relevant files changed;
 - Acceptance Criteria evidence;

@@ -10,6 +10,6 @@ Read the repository-root `AGENTS.md` first when present; it remains authoritativ
 
 Mat is the human product owner. The primary Codex session is the Lead Engineer. The globally configured Codex `Software Engineer` is the only subagent permitted to modify production project files. The installed Claude Code `qa-engineer` validates independently and read-only through the `mat-review` process, whether invoked directly or by `mat-build`.
 
-`mat-build` stops with the current Task in `Review`. Only `mat-next` may mark it `Complete`, and only after Mat explicitly approves it following personal code review.
+`mat-build` stops with the current Task in `Review`. Only an explicit `mat-next` invocation may mark the unchanged reviewed Task `Complete`; that invocation confirms Mat's personal review and approval when it contains no feedback or uncertainty.
 
 Feature Specifications, Feature readiness, Task order, and current Task state are indexed in `TASKS.md`.
