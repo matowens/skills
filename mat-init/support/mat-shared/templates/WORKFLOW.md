@@ -11,13 +11,13 @@
 
 `Draft` → `Ready` → `In Progress` → `Review` → `Complete`
 
-`Review` includes Claude QA, Lead Engineer review, and Mat's personal code review. `mat-build` stops in `Review`; only `mat-next` may transition the Task to `Complete` after Mat explicitly approves it. Use `Blocked` only when a genuine blocker prevents safe progress. Work on one Task at a time.
+`Review` includes Claude QA, Lead Engineer review, and Mat's personal code review. Required internal findings or Mat feedback may return the same Task from `Review` to `In Progress` for a correction pass, followed by another complete review. `mat-build` stops in `Review`; only `mat-next` may transition the Task to `Complete` after Mat explicitly approves it. Use `Blocked` only when a genuine blocker prevents safe progress. Work on one Task at a time.
 
 ## State Ownership
 
 - `mat-discover` collaboratively explores one proposed Feature without writing files or planning implementation.
 - `mat-feature` converts mutually completed discovery into one confirmed Feature Specification, its complete ordered Task set, and the corresponding Task index entry.
-- `mat-build` moves exactly one Task through `Ready`, `In Progress`, and `Review`.
+- `mat-build` moves exactly one Task from `Ready` into implementation or from `Review` into a correction pass, then returns it to `Review` after implementation and internal validation.
 - `mat-review` remains read-only and never changes workflow state.
 - `mat-next` moves an explicitly approved Task from `Review` to `Complete`, reconciles durable state, and identifies what follows without starting it.
 
