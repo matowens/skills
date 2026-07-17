@@ -1,6 +1,6 @@
 interface:
   display_name: "Mat Discover"
-  short_description: "Explore a proposed task thoroughly"
-  default_prompt: "Select the mat-discover skill to explore this proposed task before specification."
+  short_description: "Explore a proposed feature collaboratively"
+  default_prompt: "Use $mat-discover to investigate this proposed feature with me thoroughly before we plan it."
 policy:
   allow_implicit_invocation: false

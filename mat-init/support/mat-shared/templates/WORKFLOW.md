@@ -15,8 +15,8 @@
 
 ## State Ownership
 
-- `mat-discover` creates or updates one Feature Specification, assigns new Feature identifiers, and registers the Feature in the Task index.
-- `mat-task` creates the feature's ordered Task set and updates the Task index.
+- `mat-discover` collaboratively explores one proposed Feature without writing files or planning implementation.
+- `mat-feature` converts mutually completed discovery into one confirmed Feature Specification, its complete ordered Task set, and the corresponding Task index entry.
 - `mat-build` moves exactly one Task through `Ready`, `In Progress`, and `Review`.
 - `mat-review` remains read-only and never changes workflow state.
 - `mat-next` moves an explicitly approved Task from `Review` to `Complete`, reconciles durable state, and identifies what follows without starting it.
