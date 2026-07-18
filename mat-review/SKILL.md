@@ -1,6 +1,6 @@
 ---
 name: mat-review
-description: Perform independent Claude QA plus Lead Engineer review for exactly one bounded formal Task or one bounded one-off change set. Use only when Mat explicitly selects or invokes `mat-review`, or when `mat-build` explicitly loads it; never invoke it from ordinary conversational language. Always remain read-only; do not implement corrections or change workflow state.
+description: Perform independent Claude QA plus Lead Engineer review for exactly one bounded formal Task or one bounded one-off change set. Use only when Mat explicitly selects or invokes `mat-review`, or when `mat-build` explicitly loads it; never invoke it from ordinary conversational language. Remain read-only except for the formal Task's private consolidated QA report; do not implement corrections or change workflow state.
 ---
 
 # Review One Bounded Change Set
@@ -36,7 +36,7 @@ Invoke the installed Claude Code `qa-engineer` through [run_claude_qa.ps1](scrip
 
 Use Claude Sonnet at high effort by default. Use Claude Opus at high effort only when the Lead Engineer identifies an unusually risky, cross-cutting, security-sensitive, concurrency-heavy, or architecturally complex review. Do not run both automatically or escalate merely because Sonnet reports a finding.
 
-The bridge runs Claude in plan mode, validates its JSON execution envelope, and returns review text, its recommendation, model usage, cost, and permission denials. Treat a nonzero exit, malformed response, Claude `BLOCKED` result, material permission failure, or invalid final recommendation as a blocked independent review. Do not silently substitute a Codex-only review.
+The bridge runs Claude in plan mode, validates its JSON execution envelope, and returns review text, its recommendation, model usage, cost, permission denials, and the persisted report path. For a formal Task, it appends each pass to one consolidated raw report under the parent Feature's `reviews/` directory before returning control. This private evidence artifact is the only write allowed during `mat-review`; QA itself remains read-only and the bridge never modifies the Task Specification, workflow state, or project files. Treat a nonzero exit, malformed response, Claude `BLOCKED` result, material permission failure, or invalid final recommendation as a blocked independent review. Recover a completed pass from the persisted report instead of rerunning it merely because the calling session lost the returned text. Do not silently substitute a Codex-only review.
 
 ## Perform the Lead Engineer review
 
@@ -58,7 +58,7 @@ Claude `ACCEPT` does not force Lead Engineer approval, and a Claude finding does
 
 ## Return the result
 
-Present retained findings first, followed by verification and evidence gaps, residual risks or Optional observations, and a concise Claude execution summary containing the model, cost, and material permission denials.
+Present retained findings first, followed by verification and evidence gaps, residual risks or Optional observations, and a concise Claude execution summary containing the model, cost, material permission denials, and linked raw report path. For a formal Task, record only the verdict, report link, and Lead-retained findings in its Work Log; do not duplicate the raw report there or in Mat's handoff.
 
 When loaded by `mat-build`, return the result without changing files or workflow state. `mat-build` owns required correction routing and reruns this complete review afterward.
 

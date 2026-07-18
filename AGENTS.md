@@ -8,7 +8,7 @@ This repository is the canonical source for Mat's reusable development-workflow 
 - Keep each skill explicit, bounded, concise, and independently testable.
 - Preserve `policy.allow_implicit_invocation: false` for every personal skill.
 - Refer to installed agents through their stable public names: Codex `Software Engineer` and Claude Code `qa-engineer`.
-- `mat-discover` performs collaborative, read-only Feature discovery. `mat-feature` converts mutually completed discovery into the confirmed Feature Specification and complete ordered Task set. `mat-build` implements exactly one Task and owns correction routing. `mat-review` owns independent Claude QA and Lead Engineer review. Mat's explicit `mat-next` invocation confirms approval of the unchanged reviewed Task, completes it, and never starts the next build.
+- `mat-discover` performs collaborative, read-only Feature discovery. `mat-feature` converts mutually completed discovery into the confirmed Feature Specification and complete ordered Task set. `mat-build` implements exactly one Task and owns correction routing. `mat-review` owns independent Claude QA and Lead Engineer review. Mat's explicit `mat-next` invocation confirms approval of the unchanged reviewed Task, completes it, and never starts the next build. `mat-retro` reconciles the final retrospective, routes deferred ideas, marks the Feature Complete, and collapses its Task index entry.
 
 ## Tooling policy
 

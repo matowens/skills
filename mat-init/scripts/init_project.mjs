@@ -10,8 +10,10 @@ const TEMPLATE_FILES = new Map([
   ["CONTEXT.md", "CONTEXT.md"],
   ["WORKFLOW.md", "WORKFLOW.md"],
   ["TASKS.md", "TASKS.md"],
+  ["IDEAS.md", "IDEAS.md"],
   ["templates/feature.md", "feature-template.md"],
   ["templates/task.md", "task-template.md"],
+  ["templates/retrospective.md", "retrospective-template.md"],
 ]);
 
 class InitError extends Error {}

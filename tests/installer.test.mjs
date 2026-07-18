@@ -25,6 +25,7 @@ const SKILLS = [
   "mat-build",
   "mat-review",
   "mat-next",
+  "mat-retro",
 ];
 
 function temporaryDirectory(t) {
@@ -87,11 +88,11 @@ test("is idempotent and check mode verifies existing links", (t) => {
 
   const repeated = run(destination);
   assert.equal(repeated.status, 0, repeated.stderr);
-  assert.match(repeated.stdout, /0 created, 7 already linked/u);
+  assert.match(repeated.stdout, /0 created, 8 already linked/u);
 
   const checked = run(destination, ["--check"]);
   assert.equal(checked.status, 0, checked.stderr);
-  assert.match(checked.stdout, /Verified 7 live skill link/u);
+  assert.match(checked.stdout, /Verified 8 live skill link/u);
 });
 
 test("defaults to CODEX_HOME skills", (t) => {

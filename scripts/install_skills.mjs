@@ -20,13 +20,14 @@ const SKILLS = [
   "mat-build",
   "mat-review",
   "mat-next",
+  "mat-retro",
 ];
 
 function usage() {
   return [
     "Usage: install.cmd [--check] [--dest <directory>]",
     "",
-    "Create live directory links for Mat's seven Codex skills.",
+    "Create live directory links for Mat's eight Codex skills.",
     "",
     "Options:",
     "  --check             Verify links without changing anything.",

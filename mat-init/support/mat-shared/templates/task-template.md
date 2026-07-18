@@ -4,21 +4,19 @@
 
 Draft
 
-## Summary
+Audience: developers and engineering agents. Keep this document concise and technical. Rely on the parent Feature Specification for the broader product narrative instead of repeating it.
 
-A concise explanation of the work and intended outcome.
+## Technical Outcome
 
-## Problem
+A concise statement of the implementation outcome this Task must deliver.
 
-What problem exists and why it matters.
+## Relevant Code and Current Behavior
 
-## Desired Outcome
+Verified project facts, existing behavior, relevant files or components, and local patterns needed to implement this Task.
 
-What should be true when the Task is complete.
+## Approved Approach
 
-## Context
-
-Relevant existing behavior, project constraints, architecture, and prior decisions.
+The agreed technical direction and sequence. Preserve engineering judgment; prescribe exact mechanics only when they are an approved decision or necessary constraint.
 
 ## Scope
 
@@ -28,7 +26,7 @@ Explicitly included work.
 
 Explicitly excluded work.
 
-## Requirements
+## Technical Requirements
 
 Detailed functional and technical requirements.
 
@@ -36,25 +34,25 @@ Detailed functional and technical requirements.
 
 Observable, testable completion conditions.
 
-## Edge Cases
+## Representative Behavior
 
-Known edge cases and required behavior.
+A concrete example that demonstrates the primary outcome, plus material edge or failure behavior.
 
 ## Implementation Constraints
 
 Relevant framework, architecture, compatibility, dependency, security, or migration constraints. Do not prescribe exact implementation details unless they are approved decisions or necessary constraints.
 
-## Testing Expectations
+## Testing and Verification
 
-Required automated tests and meaningful validation.
+Required automated tests and meaningful validation. For material business logic, include a representative outcome test that would fail if the primary user promise were fundamentally wrong when practical.
 
-## Documentation Expectations
+## Documentation and Release Notes
 
-Required code, project, operational, or user-facing documentation changes.
+Only documentation, migration, configuration, deployment, compatibility, or rollback work relevant to this Task. Write `None` when no action is required.
 
-## Release Considerations
+## Dependencies
 
-Deployment, migration, configuration, compatibility, versioning, or rollback concerns.
+Required predecessor Tasks, code, data, access, or external decisions.
 
 ## Open Questions
 

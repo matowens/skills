@@ -7,10 +7,10 @@ description: Refresh an existing Mat `.mat/` project workflow against the curren
 
 ## Load and compare
 
-1. Read the root `AGENTS.md`, then `.mat/AGENTS.md`, then the full existing `.mat/` structure and all existing Feature and Task files.
+1. Read the root `AGENTS.md`, then `.mat/AGENTS.md`, then the full existing `.mat/` structure, Project Idea Bin, and all existing Feature, Task, and retrospective files.
 2. Read [project structure](../mat-init/support/mat-shared/references/project-structure.md), [workflow rules](../mat-init/support/mat-shared/references/workflow-rules.md), and every [canonical template](../mat-init/support/mat-shared/templates/).
-3. Inspect current repository facts, Git status, and `.git/info/exclude`.
-4. Compare the installed workflow's structure and guidance directly against the current canonical templates and references. Detect missing files or sections, outdated terminology, obsolete rules, broken references, missing exclusion, and project facts that changed.
+3. Inspect current repository facts, Git status, configured remotes, target branch conventions, provider CLI availability and authentication status, and `.git/info/exclude`. Compare the source-control facts to Project Context without printing credentials or tokens.
+4. Compare the installed workflow's structure and guidance directly against the current canonical templates and references. Detect missing files or sections, outdated terminology, obsolete rules, broken references, missing exclusion, and project facts that changed. Consult the existing Command Map and Known Environment Behaviors before improvising diagnostics.
 
 If `.mat/` is absent, stop and recommend the `mat-init` skill.
 
@@ -37,9 +37,10 @@ If the approved plan includes moves, renames, deletions, broad rewrites of popul
 
 - Add missing canonical files and sections.
 - Reconcile `.mat/AGENTS.md` and `.mat/WORKFLOW.md` with current role, routing, state, and safety rules while preserving approved project-specific additions.
-- Add missing `.mat/CONTEXT.md` sections and populate them only with verified repository facts or Mat's confirmed answers. Preserve existing confirmed facts and never replace populated context wholesale.
-- Preserve every Feature and Task identifier, Feature Specification, Task membership, order, state, specification content, and Work Log. Apply Feature-directory, Task-directory, or `.mat/TASKS.md` structural changes only when they were explicitly included in the approved plan.
-- Reconcile `.mat/templates/feature.md` and `.mat/templates/task.md` for future specifications without silently discarding an intentional project customization.
+- Add missing `.mat/CONTEXT.md` sections and populate them only with verified repository facts or Mat's confirmed answers. Preserve existing confirmed facts and never replace populated context wholesale. Reconcile GitLab or GitHub provider, remote, target branch, `glab` or `gh` readiness, Mat's assignee identity, review-request conventions, and final `mat-next` authority; retain explicit Unknowns when they cannot be safely verified.
+- Preserve recurring, verified environment lessons and their dependable fallbacks. Add a new behavior only when it is confirmed and costly enough to avoid rediscovering; distinguish optional capabilities from required project tooling.
+- Preserve every Feature and Task identifier, Feature Specification, Task membership, order, state, specification content, Work Log, Quick Todo, retrospective, and Idea Bin entry. Apply Feature-directory, Task-directory, or `.mat/TASKS.md` structural changes only when they were explicitly included in the approved plan.
+- Reconcile `.mat/templates/feature.md`, `.mat/templates/task.md`, and `.mat/templates/retrospective.md` for future artifacts without silently discarding an intentional project customization. Add `.mat/IDEAS.md` when missing without fabricating ideas.
 - Never blindly replace `CONTEXT.md`, `TASKS.md`, existing Feature or Task Specifications, or customized rules.
 - Ensure `.mat/` is listed in `.git/info/exclude`; do not change shared `.gitignore` solely for this workflow.
 - Never change the root `AGENTS.md`, discard uncommitted work, create a worktree, or commit changes.

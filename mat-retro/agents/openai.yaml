@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mat Retrospective"
+  short_description: "Close a Feature through retrospective"
+  default_prompt: "Use $mat-retro to complete the current Feature retrospective and reconcile its approved follow-up."
+policy:
+  allow_implicit_invocation: false

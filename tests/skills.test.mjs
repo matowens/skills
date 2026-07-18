@@ -24,6 +24,7 @@ const SKILLS = [
   "mat-build",
   "mat-review",
   "mat-next",
+  "mat-retro",
 ];
 const APPROVED_SKILLS = new Set(SKILLS);
 const INIT_SCRIPT = join(ROOT, "mat-init", "scripts", "init_project.mjs");
@@ -33,14 +34,17 @@ const CLAUDE_QA_SCRIPT = join(
   "scripts",
   "run_claude_qa.ps1",
 );
+const RETRO_IDEA_SCRIPT = join(ROOT, "mat-retro", "scripts", "resolve_workflow_ideas.mjs");
 const MAT_SHARED = join(ROOT, "mat-init", "support", "mat-shared");
 const REQUIRED_PROJECT_FILES = [
   ".mat/AGENTS.md",
   ".mat/CONTEXT.md",
   ".mat/WORKFLOW.md",
   ".mat/TASKS.md",
+  ".mat/IDEAS.md",
   ".mat/templates/feature.md",
   ".mat/templates/task.md",
+  ".mat/templates/retrospective.md",
 ];
 
 function run(command, args, cwd = ROOT) {
@@ -175,9 +179,9 @@ test("all skills are explicit and scaffolded", () => {
   }
 });
 
-test("exactly seven approved skills exist", () => {
+test("exactly eight approved skills exist", () => {
   const skillFiles = walkFiles(ROOT).filter((path) => basename(path) === "SKILL.md");
-  assert.equal(skillFiles.length, 7);
+  assert.equal(skillFiles.length, 8);
   const discovered = new Set(
     skillFiles.map((path) => relative(ROOT, dirname(path)).replaceAll("\\", "/")),
   );
@@ -219,10 +223,11 @@ test("refresh preserves customized content", () => {
   assert.match(instructions, /Never blindly replace/u);
   assert.match(instructions, /Preserve existing confirmed facts/u);
   assert.match(instructions, /Preserve every Feature and Task identifier/u);
+  assert.match(instructions, /Quick Todo/u);
   assert.match(instructions, /only when they were explicitly included in the approved plan/u);
-  assert.match(instructions, /Reconcile `.mat\/templates\/feature\.md` and `.mat\/templates\/task\.md`/u);
+  assert.match(instructions, /Reconcile `.mat\/templates\/feature\.md`, `.mat\/templates\/task\.md`, and `.mat\/templates\/retrospective\.md`/u);
   assert.match(instructions, /missing files or sections/u);
-  assert.match(instructions, /all existing Feature and Task files/u);
+  assert.match(instructions, /all existing Feature, Task, and retrospective files/u);
   assert.match(instructions, /directly against the current canonical templates and references/u);
   assert.match(instructions, /only approved changes were applied/u);
 });
@@ -236,10 +241,15 @@ test("init requires confirmed project onboarding context", () => {
   assert.match(instructions, /host or inside a specific service or container/u);
   assert.match(instructions, /Exact command map/u);
   assert.match(instructions, /Team and delivery/u);
+  assert.match(instructions, /Source control and deployment preparation/u);
+  assert.match(instructions, /GitLab or GitHub/u);
+  assert.match(instructions, /`glab` or `gh`/u);
+  assert.match(instructions, /final `mat-next` may push/u);
   assert.match(instructions, /Require Mat to confirm or correct/u);
   assert.match(instructions, /only when Mat explicitly accepts that gap/u);
   assert.match(context, /## Command Map/u);
   assert.match(context, /## Team Workflow and Terminology/u);
+  assert.match(context, /## Source Control and Deployment Preparation/u);
   assert.match(context, /## Hosting and Delivery/u);
   assert.match(context, /Targeted tests/u);
   assert.match(context, /Database migrations or seeding/u);
@@ -273,7 +283,7 @@ test("feature creates one confirmed specification and ordered Task set", () => {
   const instructions = skill("mat-feature");
   assert.match(instructions, /mutually agreed discovery handoff/u);
   assert.match(instructions, /Mat and the Lead Engineer agreed discovery was sufficient/u);
-  assert.match(instructions, /audience-neutral Feature Specification/u);
+  assert.match(instructions, /business stakeholders, the product owner, and the engineering team/u);
   assert.match(instructions, /Executive Summary reusable in email/u);
   assert.match(instructions, /smallest ordered set/u);
   assert.match(instructions, /independently buildable, testable, and reviewable Tasks/u);
@@ -286,9 +296,11 @@ test("feature creates one confirmed specification and ordered Task set", () => {
   assert.match(instructions, /\.mat\/features\/<FFFF-feature-name>\/tasks\//u);
   assert.match(instructions, /\.mat\/templates\/feature\.md/u);
   assert.match(instructions, /\.mat\/templates\/task\.md/u);
+  assert.match(instructions, /\.mat\/templates\/retrospective\.md/u);
   assert.match(instructions, /NNN-short-task-name\.md/u);
-  assert.match(instructions, /Status: Ready for Tasking/u);
+  assert.match(instructions, /from `Ready for Tasking` to `In Progress`/u);
   assert.match(instructions, /inline `Ready` state/u);
+  assert.match(instructions, /RETROSPECTIVE\.md/u);
   assert.match(instructions, /Do not populate Active Task/u);
   assert.match(instructions, /Do not implement code/u);
 });
@@ -300,7 +312,8 @@ test("build enforces correction and human review", () => {
   assert.match(instructions, /Initial build/u);
   assert.match(instructions, /Correction pass/u);
   assert.match(instructions, /parent Feature Specification/u);
-  assert.match(instructions, /parent Feature Specification is `Ready for Tasking`/u);
+  assert.match(instructions, /indexed Feature state are both `In Progress`/u);
+  assert.match(instructions, /Refuse a Feature in `Deployment`, `Retrospective`, or `Complete`/u);
   assert.match(instructions, /no different Task is active/u);
   assert.match(instructions, /required predecessors and declared dependencies are complete/u);
   assert.match(instructions, /starting Git commit/u);
@@ -310,6 +323,7 @@ test("build enforces correction and human review", () => {
   assert.match(instructions, /completion status/u);
   assert.match(instructions, /deviations, assumptions, or non-obvious decisions/u);
   assert.match(instructions, /determine the changed files and diff independently/u);
+  assert.match(instructions, /fresh Software Engineer session with no inherited conversation history/u);
   assert.match(instructions, /Lead Engineer evidence gate/u);
   assert.match(instructions, /\.\.\/mat-review\/SKILL\.md/u);
   assert.match(instructions, /`mat-review` owns Claude QA invocation/u);
@@ -325,6 +339,7 @@ test("build enforces correction and human review", () => {
   assert.match(instructions, /Never mark the Task `Complete`/u);
   assert.match(instructions, /recommend `mat-next`/u);
   assert.match(instructions, /Do not begin another Task/u);
+  assert.match(instructions, /clickable local-file link/u);
 });
 
 test("Claude QA bridge is read-only and reports usage", () => {
@@ -342,9 +357,11 @@ test("Claude QA bridge is read-only and reports usage", () => {
   assert.doesNotMatch(script, /RedirectStandardInput/u);
   assert.doesNotMatch(script, /RedirectStandardOutput/u);
   assert.match(script, /ReviewRequest/u);
+  assert.match(script, /Consolidated QA Report/u);
+  assert.match(script, /reportPath/u);
 });
 
-test("Claude QA bridge accepts a mocked one-off review", { skip: process.platform !== "win32" }, (t) => {
+test("Claude QA bridge accepts a mocked formal review and persists its report", { skip: process.platform !== "win32" }, (t) => {
   const repo = makeRepo(t);
   run("git", ["-C", repo, "config", "user.email", "tests@example.com"]);
   run("git", ["-C", repo, "config", "user.name", "Skill Tests"]);
@@ -352,6 +369,11 @@ test("Claude QA bridge accepts a mocked one-off review", { skip: process.platfor
   assert.equal(run("git", ["-C", repo, "add", "example.txt"]).status, 0);
   assert.equal(run("git", ["-C", repo, "commit", "-q", "-m", "baseline"]).status, 0);
   writeFileSync(join(repo, "example.txt"), "changed\n", "utf8");
+
+  const taskDirectory = join(repo, ".mat", "features", "0001-example", "tasks");
+  mkdirSync(taskDirectory, { recursive: true });
+  const taskPath = join(taskDirectory, "001-example.md");
+  writeFileSync(taskPath, "# Task 001: Example\n", "utf8");
 
   const fakeBin = join(repo, "fake-bin");
   mkdirSync(fakeBin);
@@ -385,6 +407,8 @@ test("Claude QA bridge accepts a mocked one-off review", { skip: process.platfor
       CLAUDE_QA_SCRIPT,
       "-RepositoryPath",
       repo,
+      "-TaskPath",
+      taskPath,
       "-ReviewRequest",
       "Review the current example change.",
       "-PreExistingPath",
@@ -410,6 +434,9 @@ test("Claude QA bridge accepts a mocked one-off review", { skip: process.platfor
   assert.equal(output.recommendation, "ACCEPT");
   assert.deepEqual(output.metadata.preExistingPaths, ["pre-existing.txt"]);
   assert.equal(output.metadata.diffBase, "HEAD");
+  assert.equal(existsSync(output.metadata.reportPath), true);
+  assert.match(read(output.metadata.reportPath), /# Consolidated QA Report: 001-example/u);
+  assert.match(read(output.metadata.reportPath), /No findings\./u);
   const argumentsText = read(capturedArguments);
   assert.match(argumentsText, /Paths already changed before this review boundary/u);
   assert.match(argumentsText, /pre-existing\.txt/u);
@@ -423,6 +450,7 @@ test("review has ranked evidence and one recommendation", () => {
   assert.match(instructions, /Claude Opus at high effort only/u);
   assert.match(instructions, /bounded one-off change set/u);
   assert.match(instructions, /parent Feature Specification/u);
+  assert.match(instructions, /persisted report path/u);
   assert.match(instructions, /use `HEAD` for current staged, unstaged, and untracked work/u);
   assert.match(instructions, /use a commit's parent/u);
   assert.match(instructions, /relevant merge base/u);
@@ -439,7 +467,7 @@ test("review has ranked evidence and one recommendation", () => {
   assert.match(instructions, /`APPROVED`, `CORRECTIONS REQUIRED`, or `BLOCKED`/u);
 });
 
-test("next requires Mat approval and only advances state", () => {
+test("next requires Mat approval and prepares deployment after the final Task", () => {
   const instructions = skill("mat-next");
   assert.match(instructions, /explicit `mat-next` invocation/u);
   assert.match(instructions, /completed personal code review and approves/u);
@@ -451,16 +479,44 @@ test("next requires Mat approval and only advances state", () => {
   assert.match(instructions, /implementation still matches that evidence/u);
   assert.match(instructions, /includes feedback, a requested change, or uncertainty/u);
   assert.match(instructions, /parent Feature Specification/u);
-  assert.match(instructions, /Preserve its identifier and `Ready for Tasking` status/u);
-  assert.match(instructions, /first eligible Task/u);
-  assert.match(instructions, /required predecessors and dependencies are complete/u);
+  assert.match(instructions, /leave the Feature `In Progress`/u);
+  assert.match(instructions, /first eligible `Ready` Task/u);
+  assert.match(instructions, /predecessors and dependencies are complete/u);
   assert.match(instructions, /remaining Tasks are `Draft` or `Blocked`/u);
-  assert.match(instructions, /every Task in the Feature is `Complete`/u);
-  assert.match(instructions, /Task states record delivery/u);
-  assert.match(instructions, /Active Task is `None`/u);
+  assert.match(instructions, /every Feature Task is `Complete`/u);
+  assert.match(instructions, /Move the Feature Specification and indexed Feature state from `In Progress` to `Deployment`/u);
+  assert.match(instructions, /Active Task as `None`/u);
   assert.match(instructions, /Do not modify production code, tests, or user-facing project documentation/u);
-  assert.match(instructions, /Do not change it to `In Progress`/u);
-  assert.match(instructions, /Stop before committing/u);
+  assert.match(instructions, /Never require a second consecutive `mat-next`/iu);
+  assert.match(instructions, /Do not pause for a separate preview or confirmation/iu);
+  assert.match(instructions, /find an existing open request/iu);
+  assert.match(instructions, /ready for review, not draft/iu);
+  assert.match(instructions, /Keep the Feature `Deployment`/iu);
+  assert.match(instructions, /Never create a duplicate request, merge it, deploy/iu);
+});
+
+test("retrospective closes one Feature and routes ideas", () => {
+  const instructions = skill("mat-retro");
+  assert.match(instructions, /Feature Specification and indexed Feature state are both `Deployment`/u);
+  assert.match(instructions, /merged, the Feature was deployed, and production validation succeeded/u);
+  assert.match(instructions, /move the Feature Specification and indexed state from `Deployment` to `Retrospective`/u);
+  assert.match(instructions, /every Feature Task is `Complete`/u);
+  assert.match(instructions, /do not invent topics/u);
+  assert.match(instructions, /Discuss one topic at a time/u);
+  assert.match(instructions, /Apply before next Feature/u);
+  assert.match(instructions, /Project-specific ideas go to `.mat\/IDEAS.md`/u);
+  assert.match(instructions, /workflow-wide Idea Bin/u);
+  assert.match(instructions, /Revisit when/u);
+  assert.match(instructions, /move the Feature back to `In Progress`/u);
+  assert.match(instructions, /Set the Feature Specification to `Complete`/u);
+  assert.match(instructions, /remove the Feature's expanded group from Current Features/u);
+  assert.match(instructions, /AI Feature workflow is complete/u);
+});
+
+test("retrospective resolves the canonical workflow Idea Bin", () => {
+  const result = run("node", [RETRO_IDEA_SCRIPT]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(resolve(result.stdout.trim()), join(ROOT, "IDEAS.md"));
 });
 
 test("generated workflow requires Mat review before completion", () => {
@@ -469,25 +525,27 @@ test("generated workflow requires Mat review before completion", () => {
   assert.match(workflow, /only an explicit `mat-next` invocation may transition/u);
   assert.match(workflow, /confirms Mat's personal review and approval/u);
   assert.match(workflow, /`mat-review` remains read-only/u);
+  assert.match(workflow, /## Feature Lifecycle/u);
+  assert.match(workflow, /moves it to `Deployment`/u);
+  assert.match(workflow, /merge, deployment, and production validation/u);
 });
 
 test("canonical Task template has required sections", () => {
   const template = read(join(MAT_SHARED, "templates", "task-template.md"));
   const headings = [
     "Status",
-    "Summary",
-    "Problem",
-    "Desired Outcome",
-    "Context",
+    "Technical Outcome",
+    "Relevant Code and Current Behavior",
+    "Approved Approach",
     "Scope",
     "Non-Goals",
-    "Requirements",
+    "Technical Requirements",
     "Acceptance Criteria",
-    "Edge Cases",
+    "Representative Behavior",
     "Implementation Constraints",
-    "Testing Expectations",
-    "Documentation Expectations",
-    "Release Considerations",
+    "Testing and Verification",
+    "Documentation and Release Notes",
+    "Dependencies",
     "Open Questions",
     "Work Log",
   ];
@@ -524,6 +582,10 @@ test("canonical Feature template is shareable and task-ready", () => {
   }
   assert.match(template, /Draft/u);
   assert.match(template, /Ready for Tasking/u);
+  assert.match(template, /In Progress/u);
+  assert.match(template, /Deployment/u);
+  assert.match(template, /Retrospective/u);
+  assert.match(template, /Complete/u);
   assert.match(template, /stakeholder communication/u);
 });
 
@@ -531,13 +593,44 @@ test("canonical Task index groups globally numbered work by feature", () => {
   const index = read(join(MAT_SHARED, "templates", "TASKS.md"));
   const structure = read(join(MAT_SHARED, "references", "project-structure.md"));
   assert.match(index, /## Active Task/u);
-  assert.match(index, /## Features/u);
+  assert.match(index, /## Quick Todos/u);
+  assert.match(index, /## Current Features/u);
+  assert.match(index, /## Completed Features/u);
   assert.doesNotMatch(index, /## Ready Tasks|## Future Tasks|## Completed Tasks/u);
   assert.match(structure, /features\/FFFF-feature-name\/FEATURE\.md/u);
   assert.match(structure, /features\/FFFF-feature-name\/tasks\/NNN-short-task-name\.md/u);
   assert.match(structure, /such as `0001-user-authentication`/u);
   assert.match(structure, /Feature numbers and Task numbers are independently, globally sequential/u);
   assert.match(structure, /Never reuse, fill a gap in, or renumber/u);
+  assert.match(structure, /plain checkboxes/u);
+  assert.match(structure, /never receive Feature or Task identifiers or separate files/u);
+});
+
+test("workflow keeps Quick Todos deliberately lightweight", () => {
+  const rules = read(join(MAT_SHARED, "references", "workflow-rules.md"));
+  const workflow = read(join(MAT_SHARED, "templates", "WORKFLOW.md"));
+  for (const content of [rules, workflow]) {
+    assert.match(content, /Quick Todos/u);
+    assert.match(content, /small, unambiguous, localized/u);
+    assert.match(content, /do not block/u);
+    assert.match(content, /Software Engineer/u);
+    assert.match(content, /targeted verification/u);
+    assert.match(content, /Claude QA is optional/u);
+    assert.match(content, /promote/u);
+  }
+});
+
+test("canonical retrospective and Idea Bin templates preserve follow-up", () => {
+  const retrospective = read(join(MAT_SHARED, "templates", "retrospective-template.md"));
+  const ideas = read(join(MAT_SHARED, "templates", "IDEAS.md"));
+  assert.match(retrospective, /## Recorded Observations/u);
+  assert.match(retrospective, /## Decision Log/u);
+  assert.match(retrospective, /## Ideas Routed/u);
+  assert.match(retrospective, /## Delivery Outcome/u);
+  assert.match(retrospective, /Collecting/u);
+  assert.match(ideas, /## Active Ideas/u);
+  assert.match(ideas, /## Closed Ideas/u);
+  assert.match(ideas, /Revisit/u);
 });
 
 test("owned workflow has no Python source or documentation dependencies", () => {

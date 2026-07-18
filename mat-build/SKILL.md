@@ -10,7 +10,7 @@ description: Implement one approved `Ready` Task or apply concrete review correc
 1. Read the root `AGENTS.md`, `.mat/AGENTS.md`, and every file it routes for implementation, including `.mat/CONTEXT.md`, `.mat/WORKFLOW.md`, `.mat/TASKS.md`, the exact Task Specification, and its parent Feature Specification.
 2. Read [workflow rules](../mat-init/support/mat-shared/references/workflow-rules.md) and [review checklist](../mat-init/support/mat-shared/references/review-checklist.md).
 3. Identify the exact Task from Mat's invocation. Use the Active Task for a correction pass or the next eligible `Ready` Task only when the choice is unambiguous; otherwise ask Mat which Task to build.
-4. Confirm the parent Feature Specification is `Ready for Tasking`, the Task file and its indexed state agree, no different Task is active, required predecessors and declared dependencies are complete, and the selected Task respects the approved implementation order. Stop and ask Mat before skipping an earlier eligible Task or changing that order.
+4. Confirm the parent Feature Specification and indexed Feature state are both `In Progress`, the Task file and its indexed state agree, no different Task is active, required predecessors and declared dependencies are complete, and the selected Task respects the approved implementation order. Refuse a Feature in `Deployment`, `Retrospective`, or `Complete` and direct Mat to deployment, retrospective, or next planning workflow. A required pre-merge correction must first return the Feature to `In Progress` with one bounded approved Task. Stop and ask Mat before skipping an earlier eligible Task or changing that order.
 5. Confirm exactly one valid entry mode:
    - **Initial build:** the selected Task is `Ready` and has no implementation awaiting review.
    - **Correction pass:** the selected Active Task is `Review` and concrete retained findings or Mat code-review feedback require implementation changes.
@@ -18,6 +18,8 @@ description: Implement one approved `Ready` Task or apply concrete review correc
 7. Confirm the configured Codex agent is named exactly `Software Engineer`. Use no worktree and only one code-writing agent.
 
 If the workflow or Task boundary is absent, contradictory, or unsafe, stop and recommend the appropriate `mat-init`, `mat-refresh`, `mat-discover`, or `mat-feature` step rather than improvising scope.
+
+When Mat explicitly identifies a post-Feature discussion point during implementation or review, append a concise observation to the parent Feature's `RETROSPECTIVE.md` without changing the active Task boundary or interrupting safe in-scope work.
 
 ## Prepare implementation
 
@@ -27,7 +29,7 @@ For a correction pass, keep the same Active Task, move its Task and indexed stat
 
 ## Delegate to the Software Engineer
 
-Delegate the entire bounded implementation or correction assignment to one `Software Engineer`. Include the Feature and Task paths, applicable root and local instructions, approved Scope, Acceptance Criteria, constraints, required tests, relevant retained findings or Mat feedback, original Git boundary, known unrelated changes, and explicit prohibitions on worktrees, commits, tags, publishing, deployment, and release.
+Delegate the entire bounded implementation or correction assignment to one `Software Engineer`. Start every initial Task in a fresh Software Engineer session with no inherited conversation history; reuse that same session only for corrections to its own Task. Point the concise delegation to the Feature and Task paths and add only the applicable instructions, ownership boundary, exceptional risk, verification requirement, relevant retained findings or Mat feedback, original Git boundary, known unrelated changes, and explicit prohibitions on worktrees, commits, tags, publishing, deployment, and release.
 
 Require the Software Engineer to inspect before editing, implement the smallest production-quality solution, write or update required tests, run the smallest relevant tests plus broader tests for shared behavior, and run documented formatting or static analysis. Do not allow another agent to write concurrently, and do not let the Lead Engineer modify production code or tests directly.
 
@@ -73,5 +75,7 @@ Ask Mat to perform personal code review and report:
 - exact verification commands and results;
 - Claude QA and Lead Engineer review outcomes; and
 - remaining risks, accepted limitations, or relevant Optional observations.
+
+Provide a complete, simple list of every affected production, test, and project-documentation file with a clickable local-file link. Do not generate a separate mobile diff artifact or duplicate the patch in the handoff.
 
 Never mark the Task `Complete`. After Mat explicitly approves the implementation, recommend `mat-next` for the completion transition. Do not begin another Task, commit, tag, publish, deploy, or release.

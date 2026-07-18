@@ -4,7 +4,9 @@
 
 Draft
 
-Use only `Draft` or `Ready for Tasking`. Mark the Feature Specification `Ready for Tasking` only when the scope, behavior, success criteria, and decisions needed for Task decomposition are clear.
+Use `Draft`, `Ready for Tasking`, `In Progress`, `Deployment`, `Retrospective`, or `Complete` according to the Feature lifecycle. `Ready for Tasking` is transitional while the approved Task set is created; successful `mat-feature` completion moves the Feature to `In Progress`. Final `mat-next` moves it to `Deployment`; `mat-retro` begins only after merge, deployment, and production validation are confirmed.
+
+Audience: business stakeholders, the product owner, and the engineering team. Keep this document comprehensive and shareable; implementation decomposition belongs in the Task Specifications.
 
 ## Executive Summary
 

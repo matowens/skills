@@ -1,37 +1,84 @@
 ---
 name: mat-next
-description: Treat Mat's explicit invocation after personal code review as approval of the unchanged current `Review` Task, complete that Task, reconcile private workflow documentation, and identify the next eligible Task or feature wrap-up. Use only when Mat explicitly selects or invokes `mat-next`; never invoke it from ordinary conversational language. Do not use when feedback or uncertainty remains, and never implement changes, start another Task, commit, deploy, or release.
+description: Treat Mat's explicit invocation after personal code review as approval of the unchanged current Review Task, complete it, and either identify the next Task or prepare the finished Feature for deployment by pushing its branch and creating or updating the configured review request. Use only when Mat explicitly selects or invokes mat-next; never invoke it from ordinary conversation. Never implement, merge, deploy, or release.
 ---
 
-# Complete an Approved Task
+# Complete an Approved Task and Prepare What Follows
 
-## Confirm the completion gate
+## Load the boundary
 
-1. Read the root `AGENTS.md`, `.mat/AGENTS.md`, every file it routes for completion, `.mat/CONTEXT.md`, `.mat/WORKFLOW.md`, `.mat/TASKS.md`, the Active Task Specification, its parent Feature Specification, and [workflow rules](../mat-init/support/mat-shared/references/workflow-rules.md).
-2. Confirm exactly one Task is active and that the Active Task pointer, its indexed state, and its Task Specification all identify that same Task as `Review`. Confirm no different Task is `In Progress` or `Review`.
-3. Confirm the latest complete `mat-review` process returned `APPROVED`, required verification is complete, no retained `Blocking` or `Important` finding remains, and the Work Log contains the reviewed file-state evidence recorded by `mat-build`.
-4. Recompute the relevant reviewed path states and confirm the implementation still matches that evidence. Stop and recommend another `mat-build` or `mat-review` pass when project files changed after approval or the current implementation cannot be proven to match the approved review boundary.
-5. Treat Mat's explicit `mat-next` invocation as confirmation that he completed personal code review and approves the current unchanged implementation when the invocation contains no feedback, requested change, or uncertainty. Do not require a redundant approval message.
-6. If the invocation includes feedback, a requested change, or uncertainty, do not treat it as approval and do not change workflow state. Route it to the existing `mat-build` correction path.
+Read the root `AGENTS.md`, `.mat/AGENTS.md`, every routed completion file, `.mat/CONTEXT.md`, `.mat/WORKFLOW.md`, `.mat/TASKS.md`, the Feature Specification, its retrospective, the Active Task Specification when present, and [workflow rules](../mat-init/support/mat-shared/references/workflow-rules.md).
 
-Do not infer approval from silence, ordinary conversation, or an invocation made before the completion gate is satisfied.
+Accept exactly one entry mode:
+
+- **Task completion:** exactly one Task is Active and synchronized as `Review` while its Feature is `In Progress`.
+- **Deployment-preparation resume:** no Task is Active, every Feature Task is `Complete`, and the Feature is already `Deployment` because an earlier final `mat-next` could not finish remote preparation.
+
+Refuse every other state rather than guessing.
+
+## Confirm the Task completion gate
+
+For Task completion, confirm the latest complete `mat-review` process returned `APPROVED`, required verification is complete, no retained `Blocking` or `Important` finding remains, and the Work Log contains the reviewed file-state evidence recorded by `mat-build`. Recompute those path states and confirm the implementation still matches that evidence and the reviewed boundary.
+
+Treat Mat's explicit `mat-next` invocation as confirmation that he completed personal code review and approves the unchanged implementation when it contains no feedback, requested change, or uncertainty. Do not require a redundant approval message. If the invocation includes feedback, a requested change, or uncertainty, leave state unchanged and route it through the existing `mat-build` correction path.
 
 ## Complete the current Task
 
-1. Set the Task status to `Complete`. Record Mat's approval through `mat-next`, the completion transition, any accepted or deferred `Optional` observations, and unresolved follow-up in its Work Log.
-2. Update `.mat/TASKS.md`: change that Task's inline state to `Complete` beneath its existing Feature and clear the matching Active Task pointer. Do not move, duplicate, reorder, or otherwise change another Task.
-3. Update the parent Feature Specification only when the approved implementation established a Mat-approved product decision or behavior that would otherwise leave the document inaccurate. Preserve its identifier and `Ready for Tasking` status; do not rewrite it merely to record activity.
-4. Update `.mat/CONTEXT.md` or `.mat/WORKFLOW.md` only when the completed Task established durable, verified project-level facts, commands, constraints, or conventions. Do not place feature-specific history in Project Context or rewrite stable documentation.
-5. Do not modify production code, tests, or user-facing project documentation during completion. If those files require changes, stop and route them through `mat-build`.
+1. Set the Task Specification and its single indexed entry to `Complete`.
+2. Record Mat's approval, the completion transition, accepted or deferred `Optional` observations, and unresolved follow-up in the Work Log.
+3. Clear the matching Active Task pointer. Do not move, duplicate, reorder, or otherwise change another Task.
+4. Update the parent Feature Specification only when approved implementation established a durable product decision that would otherwise leave it inaccurate.
+5. Update Project Context or Workflow only for durable, verified project facts or conventions.
 
-Re-read the Task Specification and `.mat/TASKS.md`. Verify the Task is `Complete`, its single indexed entry is `Complete`, the Active Task is `None`, unrelated state is unchanged, and every updated durable document agrees before reporting success.
+Do not modify production code, tests, or user-facing project documentation. If those files need changes, stop and use `mat-build`.
 
-## Determine what follows
+## Identify the next Task
 
-Use the completed Task's Feature group, listed implementation order, and declared dependencies in `.mat/TASKS.md`.
+When a later Task remains, leave the Feature `In Progress` and select only the first eligible `Ready` Task whose predecessors and dependencies are complete. Do not change the next Task. Report its title, clickable path, and concise Scope boundary. Do not make it Active, move it to `In Progress`, invoke `mat-build`, or begin implementation. State explicitly that implementation has not started.
 
-- If a later Task is `Ready`, select only the first eligible Task whose required predecessors and dependencies are complete. Report its path and concise Scope boundary. Do not change it to `In Progress`, make it Active, invoke `mat-build`, or begin implementation.
-- If no Task is eligible because remaining Tasks are `Draft` or `Blocked`, report the blocking state and recommend the appropriate clarification or planning step without changing those Tasks.
-- If every Task in the Feature is `Complete`, report that the Feature's Task set is complete. Leave the Feature Specification and indexed Feature status as `Ready for Tasking`; that status records planning readiness, while the Task states record delivery. Summarize deferred Optional observations or improvement candidates already preserved in Task Work Logs, recommend a feature-wide `mat-review` when risk warrants it, and identify unresolved release considerations.
+If no Task is eligible because remaining Tasks are `Draft` or `Blocked`, report the blocking state without changing those Tasks.
 
-Stop before committing, tagging, publishing, deploying, releasing, or beginning another Task. Report only the completed Task, durable documentation updated, next eligible Task or Feature status, and unresolved follow-up.
+## Enter Deployment after the final Task
+
+When every Feature Task is `Complete`, the same `mat-next` invocation that completed the final Task must:
+
+1. Leave Active Task as `None`.
+2. Move the Feature Specification and indexed Feature state from `In Progress` to `Deployment`.
+3. Continue directly into deployment preparation below. Never require a second consecutive `mat-next` or a separate prep skill.
+
+An explicit final `mat-next` invocation authorizes the configured Feature-branch push and creation or update of its merge request or pull request. Do not pause for a separate preview or confirmation before those actions when the documented gates pass. It does not authorize commits, merge, SSH, migration, deployment, production validation, or release.
+
+## Prepare the review request idempotently
+
+Read the provider, remote, target branch, CLI, authenticated identity or assignee, and conventions from Project Context. Do not infer missing values from preference alone.
+
+1. Confirm the current branch is the Feature branch, is not the configured target branch or another protected branch, and matches the documented `feature/FFFF-feature-name` convention when that convention applies.
+2. Require a clean working tree and confirm all intended application and shared documentation changes are committed. Private ignored `.mat/` changes do not make the Git worktree dirty.
+3. Confirm the configured remote exists and points to the documented GitLab or GitHub project.
+4. Confirm the provider CLI exists and is authenticated against the remote host: `glab auth status` for GitLab or `gh auth status --active --hostname <host>` for GitHub. Never print tokens.
+5. Push only the current Feature branch with upstream tracking: `git push -u <remote> <branch>`.
+6. Find an existing open request for the exact source branch and configured target before creating one. Use provider JSON output and match both branches; never rely only on a human-formatted list.
+7. Build the title and Markdown description from the Feature summary, completed Tasks, verification evidence, migrations, configuration, release notes, deployment steps, rollback considerations, and known limitations. Keep it useful for a second code-review perspective and do not expose private workflow chatter.
+8. If a request exists, update its title, description, target, and configured assignee rather than duplicating it. If none exists, create one. Default to ready for review, not draft, unless Project Context explicitly says otherwise.
+9. Assign Mat using the configured provider identity. `@me` is acceptable only when Project Context confirms the authenticated account is Mat's intended assignee.
+10. Record the request URL and preparation outcome in the retrospective's delivery notes, then report the URL as a clickable link.
+
+Provider commands should use explicit non-interactive flags. For GitLab, use `glab mr list` JSON filtering, then `glab mr create` or `glab mr update`; for GitHub, use `gh pr list` JSON filtering, then `gh pr create` or `gh pr edit`. Follow the installed CLI's current help when a documented flag differs.
+
+## Recover safely
+
+If tooling, authentication, branch safety, cleanliness, push, lookup, creation, or update fails:
+
+- Keep every completed Task `Complete`.
+- Keep the Feature `Deployment` and Active Task `None`.
+- Record the exact completed and incomplete preparation steps in the retrospective.
+- Report the blocker and the smallest safe recovery action.
+- On a later explicit `mat-next` while the Feature remains `Deployment`, resume deployment preparation from the missing step and find the existing request before attempting creation.
+
+Never create a duplicate request, merge it, deploy the application, or mark the Feature `Retrospective` or `Complete`.
+
+## Handle corrections and handoff
+
+Mat owns request review, merge, deployment, and production validation. If he requires a pre-merge application correction, move the Feature back to `In Progress`, add one bounded correction Task with his approval, and use `mat-build`; the final `mat-next` for that correction returns to `Deployment` and updates the same request.
+
+Finish by reporting the completed Task, durable state changes, either the next eligible Task or deployment-preparation result, the clickable request URL when available, and unresolved follow-up. During Deployment, direct Mat to review, merge, deploy, and validate. `mat-retro` is appropriate only after Mat confirms all three are complete.

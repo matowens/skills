@@ -13,6 +13,8 @@ param(
 
     [string] $DiffBase = 'HEAD',
 
+    [string] $ReportPath,
+
     [ValidateSet('sonnet', 'opus')]
     [string] $Model = 'sonnet',
 
@@ -130,15 +132,6 @@ if ($response.is_error -or $response.subtype -ne 'success' -or [string]::IsNullO
     throw "Claude QA did not return a successful review.`n$rawResponse"
 }
 
-$recommendationPattern = '^\s*(?:\*\*)?(ACCEPT|CORRECTIONS REQUIRED|BLOCKED)(?:\*\*)?\s*$'
-$resultLines = @($response.result -split '\r?\n')
-$recommendationLines = @($resultLines | Where-Object { $_ -match $recommendationPattern })
-$lastContentLine = @($resultLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[-1]
-if ($recommendationLines.Count -ne 1 -or $lastContentLine -notmatch $recommendationPattern) {
-    throw "Claude QA must finish with exactly one supported recommendation line. Found: $($recommendationLines.Count)"
-}
-$recommendation = $Matches[1].ToUpperInvariant()
-
 $modelUsage = @()
 if ($response.modelUsage) {
     $modelUsage = @($response.modelUsage.PSObject.Properties | ForEach-Object {
@@ -153,6 +146,70 @@ if ($response.modelUsage) {
     })
 }
 
+$recommendationPattern = '^\s*(?:\*\*)?(ACCEPT|CORRECTIONS REQUIRED|BLOCKED)(?:\*\*)?\s*$'
+$resultLines = @($response.result -split '\r?\n')
+$recommendationLines = @($resultLines | Where-Object { $_ -match $recommendationPattern })
+$lastContentLine = @($resultLines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[-1]
+$recommendation = 'INVALID'
+if ($recommendationLines.Count -eq 1 -and $lastContentLine -match $recommendationPattern) {
+    $recommendation = $Matches[1].ToUpperInvariant()
+}
+
+$resolvedReportPath = $null
+if (-not [string]::IsNullOrWhiteSpace($ReportPath)) {
+    $resolvedReportPath = if ([System.IO.Path]::IsPathRooted($ReportPath)) {
+        [System.IO.Path]::GetFullPath($ReportPath)
+    } else {
+        [System.IO.Path]::GetFullPath((Join-Path $gitRoot $ReportPath))
+    }
+} elseif ($task) {
+    $taskDirectory = Split-Path -Parent $task
+    if ((Split-Path -Leaf $taskDirectory) -eq 'tasks') {
+        $featureDirectory = Split-Path -Parent $taskDirectory
+        $taskBaseName = [System.IO.Path]::GetFileNameWithoutExtension($task)
+        $reportName = "$taskBaseName-qa.md"
+        $resolvedReportPath = Join-Path (Join-Path $featureDirectory 'reviews') $reportName
+    }
+}
+
+if ($resolvedReportPath) {
+    $gitRootPrefix = $gitRoot.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+    if (-not $resolvedReportPath.StartsWith($gitRootPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "QA report path must stay inside the repository: $resolvedReportPath"
+    }
+
+    $reportDirectory = Split-Path -Parent $resolvedReportPath
+    $null = New-Item -ItemType Directory -Path $reportDirectory -Force
+    $reportSubject = if ($task) { [System.IO.Path]::GetFileNameWithoutExtension($task) } else { [System.IO.Path]::GetFileNameWithoutExtension($resolvedReportPath) }
+    $timestamp = [DateTimeOffset]::UtcNow.ToString('yyyy-MM-dd HH:mm:ss') + ' UTC'
+    $denials = @($response.permission_denials)
+    $denialSummary = if ($denials.Count -eq 0) { 'None' } else { $denials -join '; ' }
+    $reportSection = @"
+## Pass: $timestamp
+
+- Baseline: $DiffBase
+- Model: $Model
+- Effort: $Effort
+- Recommendation: $recommendation
+- Cost USD: $($response.total_cost_usd)
+- Permission denials: $denialSummary
+
+### Raw QA Review
+
+$($response.result.Trim())
+"@
+    if (Test-Path -LiteralPath $resolvedReportPath -PathType Leaf) {
+        [System.IO.File]::AppendAllText($resolvedReportPath, "`r`n`r`n$reportSection", [System.Text.UTF8Encoding]::new($false))
+    } else {
+        $reportTitle = "# Consolidated QA Report: $reportSubject"
+        [System.IO.File]::WriteAllText($resolvedReportPath, "$reportTitle`r`n`r`n$reportSection", [System.Text.UTF8Encoding]::new($false))
+    }
+}
+
+if ($recommendation -eq 'INVALID') {
+    throw "Claude QA must finish with exactly one supported recommendation line. Found: $($recommendationLines.Count)"
+}
+
 [pscustomobject]@{
     status = 'success'
     recommendation = $recommendation
@@ -164,5 +221,6 @@ if ($response.modelUsage) {
         totalCostUsd = $response.total_cost_usd
         permissionDenials = @($response.permission_denials)
         modelUsage = $modelUsage
+        reportPath = $resolvedReportPath
     }
 } | ConvertTo-Json -Depth 10
