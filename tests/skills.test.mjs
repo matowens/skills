@@ -499,6 +499,12 @@ test("retrospective closes one Feature and routes ideas", () => {
   const instructions = skill("mat-retro");
   assert.match(instructions, /Feature Specification and indexed Feature state are both `Deployment`/u);
   assert.match(instructions, /merged, the Feature was deployed, and production validation succeeded/u);
+  assert.match(instructions, /Require a clean worktree/u);
+  assert.match(instructions, /Fetch the configured remote with pruning/u);
+  assert.match(instructions, /fast-forward-only pull/u);
+  assert.match(instructions, /git branch -d/u);
+  assert.match(instructions, /Never force-delete/u);
+  assert.match(instructions, /leave the Feature in `Deployment`/u);
   assert.match(instructions, /move the Feature Specification and indexed state from `Deployment` to `Retrospective`/u);
   assert.match(instructions, /every Feature Task is `Complete`/u);
   assert.match(instructions, /do not invent topics/u);
@@ -528,6 +534,8 @@ test("generated workflow requires Mat review before completion", () => {
   assert.match(workflow, /## Feature Lifecycle/u);
   assert.match(workflow, /moves it to `Deployment`/u);
   assert.match(workflow, /merge, deployment, and production validation/u);
+  assert.match(workflow, /fast-forward-only pulls the target branch/u);
+  assert.match(workflow, /safely deletes the merged local Feature branch/u);
 });
 
 test("canonical Task template has required sections", () => {

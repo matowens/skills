@@ -1,6 +1,6 @@
 ---
 name: mat-retro
-description: After Mat confirms a finished Feature was merged, deployed, and validated in production, conduct its retrospective, reconcile approved follow-up, route deferred ideas, mark the Feature Complete, and collapse its Task index entry. Use only when Mat explicitly selects or invokes mat-retro for a Feature in Deployment; never invoke it from ordinary conversation. Do not implement, merge, deploy, or release.
+description: After Mat confirms a finished Feature was merged, deployed, and validated in production, return the repository to its current target branch, conduct the retrospective, reconcile approved follow-up, route deferred ideas, mark the Feature Complete, and collapse its Task index entry. Use only when Mat explicitly selects or invokes mat-retro for a Feature in Deployment; never invoke it from ordinary conversation. Do not implement, merge, deploy, or release.
 ---
 
 # Complete a Feature Retrospective
@@ -13,6 +13,16 @@ description: After Mat confirms a finished Feature was merged, deployed, and val
 4. Require Mat's explicit confirmation that the review request was merged, the Feature was deployed, and production validation succeeded. Record the request URL, merge result, deployment result, validation result, and any late hotfix or deployment lesson. Do not infer delivery from a closed request or local Git state.
 
 If delivery is not complete, leave the Feature in `Deployment` and stop with the missing human-owned step. If application work remains, move the Feature back to `In Progress`, add or restore one bounded Task with Mat's approval, keep the retrospective open, and recommend `mat-build`. Never modify production code or tests during retrospective.
+
+## Return to the target branch
+
+After the delivery gate passes and before changing workflow state:
+
+1. Resolve the configured remote and target branch from Project Context and the merged review request. Require a clean worktree; never stash, discard, or overwrite local work.
+2. Fetch the configured remote with pruning, switch to the target branch, and update it from the remote using a fast-forward-only pull. If any step fails, leave the Feature in `Deployment`, report the exact failure and safe recovery command, and stop.
+3. If the merged review request's source branch still exists locally and is not the target branch, delete it with Git's safe merged-branch deletion (`git branch -d`). Never force-delete it. If Git refuses, preserve the branch and report why; this does not block the retrospective once the target branch is current.
+
+This step must be idempotent when already on the current target branch or when the local Feature branch is already absent.
 
 ## Enter the ceremony and build the agenda
 

@@ -28,7 +28,7 @@ Build the minimum complete design: the smallest clear implementation that comple
 
 `Draft` -> `Ready for Tasking` -> `In Progress` -> `Deployment` -> `Retrospective` -> `Complete`
 
-`Ready for Tasking` is transitional while `mat-feature` assembles the approved Task set. Successful tasking moves the Feature to `In Progress`. The `mat-next` invocation that completes the final Task moves it to `Deployment` and prepares the configured remote review request. After Mat merges, deploys, and validates production, `mat-retro` moves it to `Retrospective`, reconciles approved follow-up, marks it `Complete`, and collapses its expanded Task index entry.
+`Ready for Tasking` is transitional while `mat-feature` assembles the approved Task set. Successful tasking moves the Feature to `In Progress`. The `mat-next` invocation that completes the final Task moves it to `Deployment` and prepares the configured remote review request. After Mat merges, deploys, and validates production, `mat-retro` returns the repository to the current target branch, moves the Feature to `Retrospective`, reconciles approved follow-up, marks it `Complete`, and collapses its expanded Task index entry.
 
 ## State Ownership
 
@@ -38,7 +38,7 @@ Build the minimum complete design: the smallest clear implementation that comple
 - `mat-review` remains read-only and never changes workflow state.
 - `mat-next` moves an explicitly approved Task from `Review` to `Complete` and identifies what follows without starting it. It leaves the Feature `In Progress` when another Task remains. When the final Task completes, that same invocation moves the Feature to `Deployment`, pushes the Feature branch, and creates or updates the configured merge request or pull request. A rerun in `Deployment` resumes incomplete preparation without duplicating the request.
 - Mat owns review-request approval, merge, deployment, and production validation.
-- `mat-retro` starts only after Mat confirms merge, deployment, and production validation. It moves the Feature to `Retrospective`, discusses collected observations including deployment lessons, reconciles approved follow-up, routes deferred ideas, marks the Feature `Complete`, and collapses its Task index entry.
+- `mat-retro` starts only after Mat confirms merge, deployment, and production validation. It requires a clean worktree, fetches and prunes the configured remote, switches to and fast-forward-only pulls the target branch, and safely deletes the merged local Feature branch when Git permits. It then moves the Feature to `Retrospective`, discusses collected observations including deployment lessons, reconciles approved follow-up, routes deferred ideas, marks the Feature `Complete`, and collapses its Task index entry.
 
 ## Feature and Task Organization
 

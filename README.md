@@ -15,7 +15,7 @@ Use `mat-refresh` whenever an existing private workflow needs the current standa
 - `mat-build`: orchestrate one approved Task through initial implementation or review corrections, QA, and handoff for Mat's personal review.
 - `mat-review`: perform independent Claude QA plus read-only Lead Engineer review for one formal Task or bounded one-off change set.
 - `mat-next`: record Mat's approval of the unchanged reviewed Task, complete it, identify the next Task, or after the final Task push the Feature branch and create or update its review request without merging or deploying.
-- `mat-retro`: discuss collected Feature lessons, reconcile approved follow-up, route deferred ideas, and close the Feature.
+- `mat-retro`: after confirmed delivery, return the repository to its current target branch, discuss collected Feature lessons, reconcile approved follow-up, route deferred ideas, and close the Feature.
 
 Every `agents/openai.yaml` sets `policy.allow_implicit_invocation: false`. Explicitly select or invoke the canonical `mat-init`, `mat-refresh`, `mat-discover`, `mat-feature`, `mat-build`, `mat-review`, `mat-next`, or `mat-retro` skill through the available Codex skill interface. Ordinary conversation must not activate these workflows.
 
